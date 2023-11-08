@@ -1,14 +1,6 @@
 # tiptap-vue
 
-This template should help get you started developing with Vue 3 in Vite.
-
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+用tiptap插件的形式 + vue，仿语雀，Notion，做了一个编辑器,不是完成品，有些功能还在调研中。
 
 ## Project Setup
 
