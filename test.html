@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+</head>
+<body>
+  <!-- load tailwind -->
+<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+
+<!-- provide element -->
+<div class="element"></div>
+
+<!-- create editor -->
+<script type="module">
+import { Editor } from 'https://esm.sh/@tiptap/core'
+    import StarterKit from 'https://esm.sh/@tiptap/starter-kit'
+
+const editor = new Editor({
+  element: document.querySelector('.element'),
+  extensions: [
+    StarterKit,
+  ],
+  editorProps: {
+    attributes: {
+      class: 'focus:outline-none',
+    },
+  },
+  content: ``,
+})
+</script>
+</body>
+</html>
