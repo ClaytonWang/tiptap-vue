@@ -1,37 +1,44 @@
 import { Decoration, DecorationSet } from "@tiptap/pm/view";
 import { uid } from 'uid';
 
-export const HeadingState = ({ pluginKey, storage }) => {
+export const HeadingState = ({ pluginKey, storage, hasColapes }) => {
 
   return {
     init(_, { doc }) {
-      const [headings, decos] = collapesDeco(doc, pluginKey);
-      storage.headings = headings;
-      return [headings, decos];
+      return performHeading(doc, storage, pluginKey, hasColapes);
     },
 
     apply(tr, old) {
-
       if (!tr.docChanged || tr.getMeta('preventUpdate')) {
         return old;
       }
-      const [headings, decos] = collapesDeco(tr.doc, pluginKey);
-      storage.headings = headings;
-      return [headings, decos];
+      return performHeading(tr.doc, storage, pluginKey, hasColapes);
     }
   }
 }
 
-function collapesDeco(doc, pluginKey) {
+function performHeading(doc, storage, pluginKey, hasColapes) {
+
+  let headings = getHeadings(doc, pluginKey);
+  headings = calcSerialNumber(headings);
+
+  let decos = null;
+  if (hasColapes) {
+    decos = collapesDeco(doc, headings);
+  }
+
+  storage.headings = headings;
+  return [headings, decos];
+}
+
+function collapesDeco(doc, headings) {
+
   let decos = [];
-
-  const headings = getHeadings(doc, pluginKey);
-
-  calcSerialNumber(headings).forEach(heading => {
+  headings.forEach(heading => {
     decos.push(Decoration.widget(heading.from + 1, collapesIcon(heading)));
   });
 
-  return [headings, DecorationSet.create(doc, decos)];
+  return DecorationSet.create(doc, decos);
 }
 
 function collapesIcon(heading) {
@@ -52,7 +59,7 @@ function collapesIcon(heading) {
 function getHeadings(doc, pluginKey) {
   let result = [];
 
-  // 遍历在文档中的每个节点
+  // 遍历在文档中的每个节点,给heading节点加上属性
   doc.descendants((node, pos) => {
     if (node.type.name === pluginKey) {
       let id = node.attrs.id;

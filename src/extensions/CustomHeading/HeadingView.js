@@ -10,8 +10,7 @@ export class HeadingView {
   }
 
   onUpdate() {
-    // setTimeout(() => this.update(this.editor.view));
-    this.update(this.editor.view);
+    setTimeout(() => this.update(this.editor.view));
   }
 
   update(view, oldState) {

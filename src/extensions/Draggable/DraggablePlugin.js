@@ -61,7 +61,7 @@ class DragableView {
       const dragNode = view.state.doc.nodeAt(pos);
 
       //如果拖拽的是heading并且heading是折叠的,那么折叠的部分作为一个Slice被拖动
-      if (dragNode?.type.name === "CustomHeading" && dragNode?.attrs.fold) {
+      if (dragNode?.type.name === "nHeading" && dragNode?.attrs.fold) {
         const { rfrom, rto, id } = dragNode.attrs;
         selection = TextSelection.create(view.state.doc, rfrom, rto);
 

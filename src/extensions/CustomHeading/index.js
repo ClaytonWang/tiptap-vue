@@ -3,14 +3,15 @@ import { mergeAttributes } from '@tiptap/core';
 import { HeadingPlugin } from './HeadingPlugin';
 
 const CustomHeading = Heading.extend({
-  name: 'CustomHeading',
-
+  name: 'nHeading',
+  atom:true,
   addOptions() {
     return {
       ...this.parent?.(),
       pluginKey: this.name,
       onUpdate: () => { },
-      hasColapes:true,
+      hasColapes: false,
+      // attrs:{class:'hovered'}
     };
   },
 
@@ -49,21 +50,24 @@ const CustomHeading = Heading.extend({
     }
   },
 
-  // renderHTML({ node, HTMLAttributes }) {
-  //   console.log(HTMLAttributes);
-  //   const hasLevel = this.options.levels.includes(node.attrs.level)
-  //   const level = hasLevel
-  //     ? node.attrs.level
-  //     : this.options.levels[0]
+  renderHTML({ node, HTMLAttributes }) {
+    const hasLevel = this.options.levels.includes(node.attrs.level)
+    const level = hasLevel
+      ? node.attrs.level
+      : this.options.levels[0]
+    const fold = node.attrs.fold;
 
-  //   return [
-  //     'c-h',
-  //     mergeAttributes(HTMLAttributes, { ...this.options.attrs }),
-  //     ['i', {class:'collapse-icon open'}],
-  //     [`h${level}`, 0],
-  //   ]
-  //   // return [`h${level}`, mergeAttributes(HTMLAttributes, { ...this.options.attrs }),0]
-  // },
+    return [
+      `n-h${level}`,
+      mergeAttributes(HTMLAttributes, { ...this.options.attrs }),
+      ['n-heading-ext', {},
+        ['n-fold', { class: `caret ${fold ? 'close' : 'open'}`}]
+      ],
+      ['n-sn', {}, `${node.attrs.sn}`],
+      ['n-heading-content',0]
+    ]
+    // return [`h${level}`, mergeAttributes(HTMLAttributes, { ...this.options.attrs }),0]
+  },
 
   addStorage() {
     return {
@@ -89,18 +93,12 @@ const CustomHeading = Heading.extend({
       HeadingPlugin({
         pluginKey: this.options.pluginKey,
         onUpdate: this.options.onUpdate,
+        hasColapes:this.options.hasColapes,
         storage: this.storage,
         editor: this.editor,
       }),
     ];
   },
-
-  onSelectionUpdate({ editor }) {
-    // The selection has changed.
-    // const { content } = editor.getJSON();
-    // console.log('JSON', content);
-  },
-
 
 });
 
