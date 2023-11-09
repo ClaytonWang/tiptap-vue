@@ -91,7 +91,6 @@ export const HeadingPlugin = (options) => {
             //删除折叠末尾的空行
             const ele = document.querySelector(`div[ref=${currentHeading.id}]`);
             const del = view.posAtDOM(ele, rangeAnchor);
-            console.log(ele,del);
             tr.delete(del-2, del);
           }
 

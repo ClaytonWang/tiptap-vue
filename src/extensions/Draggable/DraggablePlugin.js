@@ -3,7 +3,6 @@ import _ from 'lodash';
 
 let dragElement = null;
 const WIDTH = 28;
-let index = 0;
 class DragableView {
   constructor({ view, options }) {
     this.storage = options.storage;

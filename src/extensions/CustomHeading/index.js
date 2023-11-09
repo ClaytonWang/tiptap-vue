@@ -10,7 +10,7 @@ const CustomHeading = Heading.extend({
       ...this.parent?.(),
       pluginKey: this.name,
       onUpdate: () => { },
-      attrs: {}
+      hasColapes:true,
     };
   },
 
