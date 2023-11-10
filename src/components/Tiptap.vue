@@ -199,7 +199,7 @@ const editor = useEditor({
   min-height: 200px;
   margin: 30px;
   border: 1px solid #ccc;
-  padding: 30px;
+  padding: 40px;
 
   outline: 2px solid transparent;
   outline-offset: 2px;
@@ -283,6 +283,8 @@ cst-img {
 .dragging {
   cursor: grabbing !important;
 }
+
+
 n-h1 {
   font-size: 28px;
 }
@@ -309,16 +311,9 @@ n-h5,
 n-h6{
   display: flex;
   justify-content: flex-start;
-  align-items: baseline;
+  align-items: center;
 }
-// n-h1:hover .caret,
-// n-h2:hover .caret,
-// n-h3:hover .caret,
-// n-h4:hover .caret,
-// n-h5:hover .caret,
-// n-h6:hover .caret {
-//   visibility: visible;
-// }
+
 .hovered .caret{
   visibility: visible;
 }
@@ -327,7 +322,10 @@ n-h6{
   visibility: visible !important;
 }
 n-heading-ext  {
-  display: inline-flex;
+  display: flex;
+  position: absolute;
+  left: 20px;
+  width: fit-content;
   user-select: none;
 }
 n-sn {
@@ -344,16 +342,6 @@ n-heading-content {
   flex: 1;
   font-weight: 700;
 }
-// .collapse-icon {
-//   display: block;
-//   visibility: hidden;
-//   position: absolute;
-//   margin-top: 5px;
-//   left: 13px;
-//   cursor: pointer;
-//   color: black;
-//   font-size: 5px;
-// }
 
 .caret {
   visibility: hidden;

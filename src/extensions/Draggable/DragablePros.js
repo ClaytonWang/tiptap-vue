@@ -1,6 +1,6 @@
 import { dragHander } from './DragableView';
 
-const DRAG_WIDTH = 28, DRAGE_ELE_HEIGHT = 16, HOVER_WIDTH = 5;
+const DRAG_WIDTH = 35, DRAGE_ELE_HEIGHT = 16, HOVER_WIDTH = 5;
 
 export class DragablePros {
   constructor({ allowDrageNode }) {
