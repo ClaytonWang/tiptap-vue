@@ -4,13 +4,13 @@ import { HeadingPlugin } from './HeadingPlugin';
 
 const CustomHeading = Heading.extend({
   name: 'nHeading',
-  atom:true,
+
   addOptions() {
     return {
       ...this.parent?.(),
       pluginKey: this.name,
       onUpdate: () => { },
-      hasColapes: false,
+      hasColapes: true,
       // attrs:{class:'hovered'}
     };
   },
@@ -51,22 +51,27 @@ const CustomHeading = Heading.extend({
   },
 
   renderHTML({ node, HTMLAttributes }) {
-    const hasLevel = this.options.levels.includes(node.attrs.level)
+
+    const hasLevel = this.options.levels.includes(node.attrs.level);
     const level = hasLevel
       ? node.attrs.level
-      : this.options.levels[0]
+      : this.options.levels[0];
+
+    const hasColapes = this.options.hasColapes;
+    if (!hasColapes) return [`h${level}`, mergeAttributes(HTMLAttributes, { ...this.options.attrs }), 0];
+
+    const id = node.attrs.id;
     const fold = node.attrs.fold;
 
     return [
       `n-h${level}`,
       mergeAttributes(HTMLAttributes, { ...this.options.attrs }),
       ['n-heading-ext', {},
-        ['n-fold', { class: `caret ${fold ? 'close' : 'open'}`}]
+        ['n-fold', { class: `caret ${fold ? 'close' : 'open'}`, ref: id }]
       ],
       ['n-sn', {}, `${node.attrs.sn}`],
-      ['n-heading-content',0]
-    ]
-    // return [`h${level}`, mergeAttributes(HTMLAttributes, { ...this.options.attrs }),0]
+      ['n-heading-content', 0]
+    ];
   },
 
   addStorage() {

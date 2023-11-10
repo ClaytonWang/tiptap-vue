@@ -1,88 +1,91 @@
-import { Plugin, PluginKey, TextSelection } from '@tiptap/pm/state';
+import { Plugin, PluginKey, TextSelection, Selection } from '@tiptap/pm/state';
+import { ResolvedPos } from '@tiptap/pm/model'
 import { HeadingView } from './HeadingView';
 import { HeadingState } from './HeadingState';
 import { getNextHeadBySN } from "../../utils/helpers";
-import _ from 'lodash';
 
 export const HeadingPlugin = (options) => {
   const key = typeof options.pluginKey === 'string' ? new PluginKey(options.pluginKey) : options.pluginKey;
-  const WIDTH = 20;
+
   return new Plugin({
     key,
     state: HeadingState({ ...options }),
     view: (view) => new HeadingView({ view, ...options }),
     props: {
-      decorations(state) {
-        const [, decos] = this.getState(state);
-        return decos;
-      },
       handleDOMEvents: {
         mouseover(view, event) {
-          setTimeout(() => {
-            let targetElem = event.target, tr = view.state.tr;
 
-            // 鼠标hover到heading上才显示箭头，否则去掉箭头
-            if (!(/n-h\d/i.test(targetElem.tagName))
-              && !(/n-heading-ext/i.test(targetElem.tagName))
-              && !(/n-fold/i.test(targetElem.tagName))
-              && !(/n-sn/i.test(targetElem.tagName))
-              && !(/n-heading-content/i.test(targetElem.tagName))) {
+          let targetElem = event.target, tr = view.state.tr;
 
-              const elem = document.querySelector('.hovered');
-              if (!elem) return;
+          // 鼠标hover到heading上才显示箭头，否则去掉箭头
+          if (!(/n-h\d/i.test(targetElem.tagName))
+            && !(/n-heading-ext/i.test(targetElem.tagName))
+            && !(/n-fold/i.test(targetElem.tagName))
+            && !(/n-sn/i.test(targetElem.tagName))
+            && !(/n-heading-content/i.test(targetElem.tagName))) {
 
-              const pos = view.posAtDOM(elem, 0);
-              if (pos < 0) return;
-              view.dispatch(tr.setNodeAttribute(pos - 1, 'class', ''));
+            const elem = document.querySelector('.hovered');
+            if (!elem) return;
 
-              return;
-            };
+            const pos = view.posAtDOM(elem, 0);
+            if (pos < 0) return;
+            view.dispatch(tr.setNodeAttribute(pos - 1, 'class', ''));
 
-            // 有可能hover到heading的 里面元素，找到最外层的n-h元素
-            while (targetElem && targetElem.parentNode) {
-              if (targetElem.parentNode?.classList?.contains('ProseMirror')) {
-                break
-              }
-              targetElem = targetElem.parentNode;
+            return;
+          };
+
+          // 有可能hover到heading的里面元素，找到最外层的n-h元素
+          while (targetElem && targetElem.parentNode) {
+            if (targetElem.parentNode?.classList?.contains('ProseMirror')) {
+              break
             }
+            targetElem = targetElem.parentNode;
+          }
 
-            if (/n-h\d/i.test(targetElem.tagName)) {
-              const pos = view.posAtDOM(targetElem, 0);
-              if (pos < 0) return;
-              view.dispatch(tr.setNodeAttribute(pos - 1, 'class', 'hovered'));
-            }
-          })
+          if (/n-h\d/i.test(targetElem.tagName)) {
+            const pos = view.posAtDOM(targetElem, 0);
+            if (pos < 0) return;
+            view.dispatch(tr.setNodeAttribute(pos - 1, 'class', 'hovered'));
+          }
         }
+
       },
       handleDrop(view, _, slice, moved) {
-        //拖动标题后把光标设置在标题尾部
+        //拖动标题后把光标设置在标题头部
         if (moved) {
           setTimeout(() => {
             const node = slice.content.firstChild;
-            const { id } = node.attrs;
+            const { id,sn } = node.attrs;
+            if (!id || !sn) return;
+
             let selection = null;
             try {
               view.state.doc.descendants((_node, pos) => {
                 if (_node.attrs.id === id) {
-                  selection = TextSelection.create(view.state.doc, pos + _node.nodeSize - 1);
+                  // selection = TextSelection.create(view.state.doc, pos + _node.nodeSize - 1);
+                  selection = TextSelection.create(view.state.doc, pos + 1);
                   throw 'break';
                 }
               });
-            } catch (e) { };
+            } catch (e) { /* empty */ };
 
             view.dispatch(view.state.tr.setSelection(selection));
-          }, 10);
+          });
         }
       },
+
       handleClick(view, _, event) {
-        if (/collapse-icon/.test(event.target.className)) {
-          const currentHeading = event.target.heading;
+        if (/caret/.test(event.target.className)) {
+          const refId = event.target.getAttribute('ref');
           const isOpened = /open/.test(event.target.className);
           const tr = view.state.tr;
-          // 设置光标位置
-          tr.setSelection(TextSelection.create(view.state.doc, currentHeading.to - 1));
 
           const [headings] = this.getState(view.state);
+
+          const currentHeading = headings.filter((v) => v.id === refId).pop();
+
+          // 设置光标位置
+          // tr.setSelection(TextSelection.create(view.state.doc, currentHeading.to - 1));
 
           // 折叠开始
           const rangeAnchor = currentHeading.to;
@@ -91,11 +94,12 @@ export const HeadingPlugin = (options) => {
           const rangeHead = currentHeading.rto;
 
           // 要折叠的区间
-          const selection = TextSelection.create(view.state.doc, rangeAnchor, rangeHead).content();
+          const selection = new TextSelection(tr.doc.resolve(rangeAnchor), tr.doc.resolve(rangeHead));
 
+          const { content } = selection.content();
           //折叠区间内的heading
           let _heading = null, _nextHeading = null;
-          selection.content.forEach((node, offset) => {
+          content.forEach((node, offset) => {
 
             let currentOffset = rangeAnchor + offset;
 
@@ -121,7 +125,7 @@ export const HeadingPlugin = (options) => {
           //被点击的heading
           tr.setNodeMarkup(currentHeading.from, undefined, {
             ...currentHeading,
-            fold: isOpened
+            fold: isOpened,
           });
 
           if (isOpened) {

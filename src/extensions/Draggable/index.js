@@ -2,27 +2,20 @@ import { Extension } from '@tiptap/core';
 import { DraggablePlugin } from './DraggablePlugin';
 
 export const Draggable = Extension.create({
-  name: "Draggable",
+  name: "draggable",
+
   addOptions() {
     return {
-      pluginKey: 'Draggable',
-      dragClass: 'drag-handle'
+      pluginKey: this.name,
+      dragClass: 'drag-handle',
+      //允许可以拖拽的dom node
+      allowDrageNode: (dom) => true,
     };
-  },
-
-  addStorage() {
-    return {
-      selections: {},
-    }
   },
 
   addProseMirrorPlugins() {
     return [
-      DraggablePlugin({
-        pluginKey: this.options.pluginKey,
-        dragClass: this.options.dragClass,
-        storage:this.storage
-      }),
+      DraggablePlugin({...this.options}),
     ];
   },
 });
