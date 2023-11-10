@@ -270,7 +270,7 @@ cst-img {
 
 .drag-handle {
   position: absolute;
-  transition: all 0.1s ease-in-out;
+  transition: all 0.2s ease-in;
   flex: 0 0 auto;
   width: 1rem;
   height: 1rem;

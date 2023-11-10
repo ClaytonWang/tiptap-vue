@@ -74,6 +74,7 @@ export class HeadingPros {
     }
   }
 
+  // 折叠功能
   _handleClick(view, _, event) {
     if (/caret/.test(event.target.className)) {
       const refId = event.target.getAttribute('ref');
@@ -104,11 +105,15 @@ export class HeadingPros {
         let currentOffset = rangeAnchor + offset;
 
         if (node.type.name === this.pluginKey) {
-          _heading = headings.filter((v) => v.sn === node.attrs.sn).pop();
+
+          _heading = headings.filter((v) => v.id === node.attrs.id).pop();
+          if (_heading.fold) return;
+
           _nextHeading = getNextHeadBySN(node.attrs.sn, headings);
         }
 
         // heading区间的node，如果被折叠了，那么不用再次折叠.如果是折叠的，父级的折叠操作不应该影响它。
+
         if (node.type.name !== this.pluginKey
           && _heading?.to <= currentOffset
           && currentOffset < _nextHeading?.from
