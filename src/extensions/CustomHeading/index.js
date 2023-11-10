@@ -9,9 +9,20 @@ const CustomHeading = Heading.extend({
     return {
       ...this.parent?.(),
       pluginKey: this.name,
-      onUpdate: () => { },
+
+      // 文章更新后拿到最新的title list
+      // eslint-disable-next-line no-unused-vars
+      onUpdate: (headings) => { },
+
+      //title是否有折叠功能
       hasColapes: true,
-      // attrs:{class:'hovered'}
+
+      //自定义序号算法，接受title数组，返回算好的序列号的title数组
+      //序列号存储在对象的sn字段中
+      calcSerialNumber,
+
+      //自定义其他属
+      attrs:{}
     };
   },
 
@@ -25,23 +36,30 @@ const CustomHeading = Heading.extend({
         default: null,
         keepOnSplit:false,
       },
+
+      //标题序号
       sn: {
         default: null,
         keepOnSplit:false,
       },
+
+      //标题是否被折叠
       fold: {
         default: false,
         keepOnSplit:false,
       },
+
       class: {
         default: null,
         keepOnSplit:false,
       },
+
       //折叠区间 from
       rfrom: {
         default: null,
         keepOnSplit:false,
       },
+
       //折叠区间 to
       rto: {
         default: null,
@@ -80,6 +98,7 @@ const CustomHeading = Heading.extend({
     }
   },
 
+  //被折叠的node必须要加上class属性
   addGlobalAttributes() {
     return [
       {
@@ -96,15 +115,46 @@ const CustomHeading = Heading.extend({
   addProseMirrorPlugins() {
     return [
       HeadingPlugin({
-        pluginKey: this.options.pluginKey,
-        onUpdate: this.options.onUpdate,
-        hasColapes:this.options.hasColapes,
         storage: this.storage,
         editor: this.editor,
+        ...this.options
       }),
     ];
   },
 
 });
+
+
+function calcSerialNumber(headings = [], maxLevel = 6) {
+
+  const currentNumbers = Array(maxLevel).fill(0);
+
+  if (!headings || headings.length === 0) {
+    return headings
+  }
+
+  let topLevel = Math.min(...headings.map((heading) => { return parseInt(heading.level) }));
+
+  if (topLevel === 0) topLevel = 1;
+
+  headings.forEach((heading) => {
+    const level = parseInt(heading.level) - topLevel + 1;
+    // 序列号
+    currentNumbers[level - 1]++;
+
+    for (let i = level; i < maxLevel; i++) {
+      currentNumbers[i] = 0;
+    }
+
+    const headingNumber = currentNumbers.slice(0, level).join(".");
+
+    heading.sn = headingNumber;
+    heading.text = heading.sn + ' ' + heading.text;
+
+  });
+
+  return headings;
+}
+
 
 export default CustomHeading;
