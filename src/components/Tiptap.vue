@@ -37,7 +37,7 @@ import DraggableItem from '../extensions/DraggableItem';
 import TableOfContents from '../extensions/tableOfContents';
 // import { TableOfContent } from '@tiptap-pro/extension-table-of-content'
 // import { Markdown } from 'tiptap-markdown';
-// import Custom from '../extensions/custom';
+import Custom from '../extensions/custom';
 import CustomParagraph from '../extensions/CustomParagraph';
 import EmptyLine from '../extensions/EmptyLine';
 import CustomImage from '../extensions/CustomImage';
@@ -102,7 +102,7 @@ const data1 = `<h2>heading</h2>
           <tr><td>222</td></tr>
         </table>
         <p>paragraph</p>
-        <p>paragraph</p>
+        <p>还有一对用于异步迭代的协议，命名为异步迭代器和异步可迭代协议。它们与可迭代和迭代器协议有着非常类似的接口</p>
         <p>paragraph</p>
         <h2>heading</h2>
         <p>paragraph</p>
@@ -125,14 +125,14 @@ const editor = useEditor({
   content: data1,
   // onCreate: () => {
   //   console.log(editor.value.storage);
-  //   headings.value = editor.value.storage.heading.headings;
+  //   headings.value = editor.value.storage.nHeading.headings;
   // },
   extensions: [
     // Heading,
     CustomHeading.configure({
-      onUpdate: (menu) => {
-        headings.value = menu;
-       }
+      // onUpdate: (menu) => {
+      //   headings.value = menu;
+      //  }
     }),
     Document,
     Paragraph,
@@ -157,6 +157,7 @@ const editor = useEditor({
     Commands.configure({
       suggestion
     }),
+    Custom,
     EmptyLine,
     // CustomParagraph,
     // DraggableItem,
@@ -175,6 +176,10 @@ const editor = useEditor({
   ]
 });
 
+onMounted(() => {
+  console.log(editor);
+  headings.value = editor.value.storage.nHeading.headings;
+})
 
 // const clickHandle = () => {
 //   // 动态赋值
@@ -284,7 +289,10 @@ cst-img {
   cursor: grabbing !important;
 }
 
-
+n-line {
+  display: block;
+  margin:0;
+}
 n-h1 {
   font-size: 28px;
 }

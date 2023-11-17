@@ -6,16 +6,16 @@ import Widget from './widget.vue';
 export default Node.create({
   name: 'custom',
 
-  group: 'block list',
+  group: 'block',
 
   draggable: true,
 
   selectable: true,
 
-  code: true,
+  // code: true,
 
-  allowGapCursor: false,
-  
+  // allowGapCursor: false,
+
   atom: true,
 
   parseHTML() {
@@ -32,21 +32,13 @@ export default Node.create({
   },
 
   addNodeView() {
-    const a = VueNodeViewRenderer(Widget);
-    console.log(a);
-    return a;
+    return VueNodeViewRenderer(Widget);
   },
 
-  addAttributes() { 
+  addAttributes() {
     return {
-      color:{
-        default: 'pink',
-        renderHTML: attributes => {
-          return {
-            'data-color': attributes.color,
-            style: `color: ${attributes.color}`,
-          }
-        },
+      class:{
+        default: 'abc',
       },
     }
   }

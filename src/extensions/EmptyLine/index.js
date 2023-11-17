@@ -1,8 +1,15 @@
-import Paragraph from '@tiptap/extension-paragraph'
+import { Extension } from '@tiptap/core';
 
-const EmptyLine = Paragraph.extend({
+const EmptyLine = Extension.create({
   name: 'emptyLine',
+
   draggable: false,
+
+  group: 'block',
+
+  selectable: false,
+
+  atom: true,
 
   addAttributes() {
     return {
@@ -11,14 +18,28 @@ const EmptyLine = Paragraph.extend({
       },
       ref: {
         default:null,
+      },
+      style: {
+        default:null,
       }
     }
   },
 
+  parseHTML() {
+    return [
+      {
+        tag: 'n-line',
+      },
+    ];
+  },
+
   renderHTML({HTMLAttributes}) {
-      return ['div',HTMLAttributes];
-  }
+      return ['n-line',HTMLAttributes];
+  },
 
 });
+
+EmptyLine.type = 'node';
+
 export default EmptyLine;
 

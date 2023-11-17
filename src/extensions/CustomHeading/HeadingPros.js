@@ -104,6 +104,7 @@ export class HeadingPros {
 
         let currentOffset = rangeAnchor + offset;
 
+
         if (node.type.name === this.pluginKey) {
 
           _heading = headings.filter((v) => v.id === node.attrs.id).pop();
@@ -134,16 +135,18 @@ export class HeadingPros {
       });
 
       if (isOpened) {
-        // 折叠末尾插入空行,文章结尾插入空paragraph
+        // 折叠末尾插入空行,文章结尾插入1px高的空行
+        const eAttr = { ref: currentHeading.id };
         if (rangeHead === (view.state.doc.nodeSize - 2)) {
-          tr.insert(rangeHead, view.state.schema.nodes.paragraph.create());
+          eAttr.style =  'height:1px'
         }
-        tr.insert(rangeHead, view.state.schema.nodes.emptyLine.create({ ref: currentHeading.id }));
+        tr.insert(rangeHead, view.state.schema.nodes.emptyLine.create(eAttr));
       } else {
         //删除折叠末尾的空行
-        const ele = document.querySelector(`div[ref=${currentHeading.id}]`);
-        const del = view.posAtDOM(ele, rangeAnchor);
-        tr.delete(del - 2, del);
+        const ele = document.querySelector(`n-line[ref=${currentHeading.id}]`);
+        const delPos = view.posAtDOM(ele, rangeAnchor);
+
+        tr.delete(delPos, delPos+1);
       }
 
       view.dispatch(tr);

@@ -1,8 +1,9 @@
 <template>
-  <node-view-wrapper as="test">
+  <node-view-wrapper :class="node?.attrs?.class">
     <span>abc</span>
     function a(){}
     a()
+    <NodeViewContent />
   </node-view-wrapper>
 </template>
 
@@ -18,5 +19,9 @@ export default {
     NodeViewWrapper,
     NodeViewContent,
   },
+  mounted() {
+    console.log(nodeViewProps);
+    console.log(this.node);
+  }
 };
 </script>
