@@ -22,6 +22,8 @@ import Document from '@tiptap/extension-document'
 import ListItem from '@tiptap/extension-list-item'
 import Paragraph from '@tiptap/extension-paragraph'
 import Text from '@tiptap/extension-text'
+import Highlight from '@tiptap/extension-highlight'
+import Underline from '@tiptap/extension-underline'
 import Heading from '@tiptap/extension-heading';
 import Commands from '../extensions/commands.js';
 import suggestion from '../extensions/suggestion';
@@ -34,7 +36,7 @@ import { Dropcursor } from '@tiptap/extension-dropcursor';
 import Image from '@tiptap/extension-image';
 // import StorageTest from '../extensions/storageTest';
 import DraggableItem from '../extensions/DraggableItem';
-import TableOfContents from '../extensions/tableOfContents';
+// import TableOfContents from '../extensions/tableOfContents';
 // import { TableOfContent } from '@tiptap-pro/extension-table-of-content'
 // import { Markdown } from 'tiptap-markdown';
 import Custom from '../extensions/custom';
@@ -49,8 +51,8 @@ import { TrailingNode } from '../extensions/TrailingNode/trailing-node.ts';
 import TOC from '../extensions/TableOfContent/TOC.vue';
 import { TOCExt } from '../extensions/TableOfContent';
 import {Draggable} from '../extensions/Draggable';
-import { CollapseHeading } from '../extensions/CollapseHeading';
 import CustomHeading from '../extensions/CustomHeading';
+import Widget,{Comments,commentIconDOM} from '../extensions/Widget';
 // import DragHandle from '../extensions/Draggable/DragHandle.js';
 
 // import { Editor } from '@tiptap/core';
@@ -88,6 +90,7 @@ const data1 = `<h2>heading</h2>
         <p>paragraph</p>
         <p>paragraph</p>
         <p>paragraph</p>
+        <h1>abc</h1>
         <ol>
           <li>sfsfsfsf</li>
           <li>fdfssss</li>
@@ -164,6 +167,12 @@ const editor = useEditor({
     // CustomReturn,
     // DragHandle,
     Draggable,
+    Highlight,
+    Underline,
+    Widget.configure({
+      plugins: [Comments],
+      widgetIconDOM:commentIconDOM
+    })
     // TOCExt.configure({
     //   onUpdate: (menu) => {
     //     headings.value = menu;
@@ -377,5 +386,17 @@ n-heading-content {
 
 
 //-----
-
+.comment{
+  position: absolute;
+  transition: all 0.2s ease-in;
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  cursor: pointer;
+  user-select: none;
+  background:no-repeat center url('data:image/svg+xml;base64,PHN2ZyB0PSIxNzAwNDU5ODA4Mjc0IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjUgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjMwNzAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PHBhdGggZD0iTTUxMi4wMDEwMjQgODk1Ljk5NTY0OGMtMzIuNzQzNDg5IDAtNjQuNjYzNjgxLTIuOTU1MjctOTUuNjk5MTM1LTguMDkzNzEyTDE5MS45OTgzMzYgMTAyNCAxOTEuOTk4MzM2IDc5Ny40MjExMTVDNzUuMDUxMTU4IDcxNS4zMTA0ODcgMCA1ODkuNDAzMjkxIDAgNDQ4LjAwMjk0NCAwIDIwMC41NzUzNzcgMjI5LjIzMzA5OCAwIDUxMi4wMDEwMjQgMGMyODIuNzY5OTc0IDAgNTEyLjAwMTAyNCAyMDAuNTc1Mzc3IDUxMi4wMDEwMjQgNDQ4LjAwMjk0NEMxMDI0LjAwMjA0OCA2OTUuNDI0MzY3IDc5NC43NzMwNDYgODk1Ljk5NTY0OCA1MTIuMDAxMDI0IDg5NS45OTU2NDh6TTUxMi4wMDEwMjQgNjQuMDA0MjI0Yy0yNDcuNDIzNDcxIDAtNDQ4LjAwMDg5NiAxNzEuOTIxNzUyLTQ0OC4wMDA4OTYgMzgzLjk5ODcyIDAgMTMwLjExNTg0NCA3NS42OTYyNzkgMjQ0LjkyMDgxIDE5MS4yMDU3NTggMzE0LjM2ODYyOWwtMi4wMTkzMzIgMTQ4LjQzMzE5MyAxNTAuNjM4ODkzLTkwLjU0NjM1N2MzNC43MDM0MjkgNy4zODcxNTEgNzAuODAzNTk4IDExLjc0MzI1NSAxMDguMTczNTI4IDExLjc0MzI1NSAyNDcuNDI1NTE5IDAgNDQ4LjAwMDg5Ni0xNzEuOTIxNzUyIDQ0OC4wMDA4OTYtMzgzLjk5ODcyUzc1OS40MjY1NDMgNjQuMDA0MjI0IDUxMi4wMDEwMjQgNjQuMDA0MjI0ek03MzYuMDAxNDcyIDQxNi4wMDA4MzJsLTQ0OC4wMDA4OTYgMGMtMTcuNjcyMjI3IDAtMzIuMDAwMDY0LTE0LjMyNTc4OS0zMi4wMDAwNjQtMzEuOTk4MDE2czE0LjMyNzgzNy0zMi4wMDIxMTIgMzIuMDAwMDY0LTMyLjAwMjExMmw0NDguMDAwODk2IDBjMTcuNjcyMjI3IDAgMzIuMDAyMTEyIDE0LjMyOTg4NSAzMi4wMDIxMTIgMzIuMDAyMTEyUzc1My42NzM2OTkgNDE2LjAwMDgzMiA3MzYuMDAxNDcyIDQxNi4wMDA4MzJ6TTM1Mi4wMDA3MDQgNTQ0LjAwNTE4NGwzMjAuMDAwNjQgMGMxNy42NzIyMjcgMCAzMi4wMDAwNjQgMTQuMzE5NjQ1IDMyLjAwMDA2NCAzMS45OTgwMTYgMCAxNy42NjgxMzEtMTQuMzI3ODM3IDMxLjk5MTg3Mi0zMi4wMDAwNjQgMzEuOTkxODcybC0zMjAuMDAwNjQgMGMtMTcuNjc0Mjc1IDAtMzIuMDAwMDY0LTE0LjMyMzc0MS0zMi4wMDAwNjQtMzEuOTkxODcyQzMyMC4wMDA2NCA1NTguMzI0ODI5IDMzNC4zMjY0MjkgNTQ0LjAwNTE4NCAzNTIuMDAwNzA0IDU0NC4wMDUxODR6IiBwLWlkPSIzMDcxIiBmaWxsPSIjMmMyYzJjIj48L3BhdGg+PC9zdmc+')
+}
 </style>

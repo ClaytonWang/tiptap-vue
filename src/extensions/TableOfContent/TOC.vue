@@ -16,6 +16,7 @@
     </ul>
     <button @click="addHeading">add heading</button>
     <button @click="deleteHeading">delete heading</button>
+    <button @click="getJSON">getJSON</button>
   </div>
 </template>
 
@@ -37,6 +38,10 @@ function addHeading() {
 
 function deleteHeading() {
   deleteContent(props.editor, 0, 9);
+}
+
+function getJSON() {
+  console.log(props.editor.getJSON());
 }
 
 function itemClick(e, heading) {

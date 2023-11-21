@@ -102,7 +102,7 @@ const CustomHeading = Heading.extend({
   addGlobalAttributes() {
     return [
       {
-        types: ['paragraph','table','bulletList','orderedList','image'],
+        types: ['paragraph','table','bulletList','orderedList','image','underline'],
         attributes: {
           class: {
             default: null,
@@ -127,20 +127,28 @@ const CustomHeading = Heading.extend({
 
 function calcSerialNumber(headings = [], maxLevel = 6) {
 
-  const currentNumbers = Array(maxLevel).fill(0);
+  let currentNumbers = Array(maxLevel).fill(0);
 
   if (!headings || headings.length === 0) {
     return headings
   }
 
-  let topLevel = Math.min(...headings.map((heading) => { return parseInt(heading.level) }));
+  // let topLevel = Math.min(...headings.map((heading) => { return parseInt(heading.level) }));
 
-  if (topLevel === 0) topLevel = 1;
+  // if (topLevel === 0) topLevel = 1;
 
+  // let topLevel = 1;
+  currentNumbers[0] = 1;
+
+  let lastLevel = 0;
   headings.forEach((heading) => {
-    const level = parseInt(heading.level) - topLevel + 1;
+    const level = parseInt(heading.level);
+
     // 序列号
     currentNumbers[level - 1]++;
+    if (lastLevel === level) {
+      currentNumbers[level - 2]++;
+    }
 
     for (let i = level; i < maxLevel; i++) {
       currentNumbers[i] = 0;
@@ -149,8 +157,9 @@ function calcSerialNumber(headings = [], maxLevel = 6) {
     const headingNumber = currentNumbers.slice(0, level).join(".");
 
     heading.sn = headingNumber;
-    heading.text = heading.sn + ' ' + heading.text;
+    heading.text = heading.sn + '. ' + heading.text;
 
+    lastLevel =  level
   });
 
   return headings;

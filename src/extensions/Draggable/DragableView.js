@@ -17,8 +17,11 @@ export class DragableView {
   }
 
   blockPosAtCoords(coords, view) {
-    const pos = view.posAtCoords(coords)
-    let node = view.nodeDOM(pos.pos)
+    // const pos = view.posAtCoords(coords)
+    // let node = view.nodeDOM(pos.pos)
+
+    const { pos } = view.posAtCoords(coords);
+    let { node } = view.domAtPos(pos);
 
     while (node && node.parentNode) {
       if (node.parentNode?.classList?.contains('ProseMirror')) {
@@ -42,7 +45,7 @@ export class DragableView {
       return;
     }
 
-    const coords = { left: e.clientX, top: e.clientY };
+    const coords = { left: e.clientX+50, top: e.clientY };
     const pos = this.blockPosAtCoords(coords, view);
 
     if (pos != null) {
